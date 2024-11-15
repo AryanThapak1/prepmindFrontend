@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BASE_URL from "../utils/Constant";
 const downloadResume = () => {
     const resumeElement = document.getElementById("resume");
@@ -24,17 +24,30 @@ const downloadResume = () => {
       pdf.save("resume.pdf");
     });
   };
-  
 
 const Resume = () => {
   const { id } = useParams();
   const [resumeData, setResumeData] = useState();
-
+  const navigate=useNavigate();
   const fetchData = async () => {
     const res = await fetch(`${BASE_URL}/api/v1/resume/${id}`);
     const data = await res.json();
     setResumeData(data.resume.resume);
   };
+
+  
+const deleteResume=async()=>{
+  const res=await fetch(`${BASE_URL}/api/v1/resume/${id}`,{
+    method:"DELETE"
+  })
+
+  if(!res.ok){
+    return;
+  }
+
+  navigate("/Resume")
+
+}
 
   useEffect(() => {
     fetchData();
@@ -44,12 +57,18 @@ const Resume = () => {
 
   return (
     <div className="p-4">
+      <div className="flex justify-between">
       <button
         onClick={downloadResume}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
       >
         Download Resume
       </button>
+      <button className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={deleteResume}>
+        Delete Resume
+      </button>
+      </div>
+      
       <div
         id="resume"
         className="max-w-4xl mx-auto p-4 bg-white shadow-md"

@@ -12,7 +12,7 @@ import CreateResume from "./Components/ResumeForm";
 import ResumeFile from "./Components/ResumeFile";
 import QuizPlayer from "./Components/QuizPlayer";
 import HomePage from "./Components/Hompage";
-
+import {loader as authProtector} from "./utils/authProtection"
 function App() {
   const router = createBrowserRouter([
     {
@@ -26,14 +26,17 @@ function App() {
         {
           path: "Resume",
           element: <Resume />,
+          loader:authProtector
         },
         {
           path: "Questions",
           element: <Questions />,
+          loader:authProtector
         },
         {
           path: "Quiz",
-          element: <Quiz />
+          element: <Quiz />,
+          loader:authProtector
         },
         {
           path: "SignUp",
@@ -48,10 +51,12 @@ function App() {
         {
           path: "Analytics",
           element: <Analytics />,
+          loader:authProtector
         },
         {
           path: "Profile",
           element: <Profile />,
+          loader:authProtector
         },{
           path:"create-resume",
           element:<CreateResume/>

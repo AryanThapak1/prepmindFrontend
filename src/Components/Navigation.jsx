@@ -25,11 +25,6 @@ export default function Example() {
   let navigation =token ? [
     { name: "Homepage", href: "/", current: location.pathname === "/" },
     { name: "Resume", href: "Resume", current: location.pathname === "/Resume" },
-    {
-      name: "Questions",
-      href: "Questions",
-      current: location.pathname === "/Questions",
-    },
     { name: "Quiz", href: "Quiz", current: location.pathname === "/Quiz" },{
         name:"Analytics",href:"Analytics",current:location.pathname==="/Analytics"
     }]:[
@@ -38,6 +33,14 @@ export default function Example() {
     { name: "Sign Up", href: "SignUp", current: location.pathname === "/SignUp" }
     ]
   ;
+
+  if(role==='admin'){
+    navigation.push({
+      name: "Questions",
+      href: "Questions",
+      current: location.pathname === "/Questions",
+    },)
+  }
 
   return (
     <Disclosure as="nav" className="bg-[#0b0c0d]">

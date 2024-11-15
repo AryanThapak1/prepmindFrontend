@@ -13,7 +13,6 @@ export async function loginAction({ request }) {
     password: formData.get("password"),
   };
 
-  console.log(data);
   try {
     const response = await fetch(`${BASE_URL}/api/v1/user/login`, {
       method: "POST",
@@ -29,7 +28,7 @@ export async function loginAction({ request }) {
 
     const processedData = await response.json();
     const token = processedData.token;
-    const role = processedData.role;
+    const role = processedData.data.User.role;
 
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);

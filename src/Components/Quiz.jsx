@@ -39,13 +39,13 @@ const Quiz = () => {
             <h2 className="text-3xl font-extrabold text-center mb-8 text-blue-700">Available Quizzes</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {quizzes.map(quiz => (
-                    <div key={quiz._id} className="bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden transform transition duration-300 hover:scale-105">
+                    <div key={quiz._id} className="bg-transparent shadow-lg rounded-lg border border-gray-200 overflow-hidden transform transition duration-300 hover:scale-105">
                         <div className="p-6">
-                            <h3 className="text-xl font-semibold text-gray-800">{quiz.quizId}</h3>
-                            <p className="mt-2 text-gray-600">Click below to start the quiz</p>
+                            <h3 className="text-xl font-semibold text-white">{quiz.quizId}</h3>
+                            <p className="mt-2 text-white">Click below to start the quiz</p>
                             <Link
                                 to={`/quiz/${quiz._id}`}
-                                className="mt-4 block text-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+                                className="mt-4 block text-center px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
                             >
                                 Start Quiz
                             </Link>

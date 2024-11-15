@@ -47,7 +47,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter question title"
-              className="w-full p-3 border bg-transparent border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border bg-transparent border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
@@ -56,7 +56,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter option 1"
-              className="w-full p-3 bg-transparent border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-transparent border border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
@@ -65,7 +65,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter option 2"
-              className="w-full p-3 bg-transparent border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-transparent border border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
@@ -74,7 +74,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter option 3"
-              className="w-full p-3 bg-transparent border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-transparent border border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
@@ -83,7 +83,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter option 4"
-              className="w-full p-3 bg-transparent border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-transparent border border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
@@ -92,7 +92,7 @@ const Questions = () => {
               onChange={(event) => handleInputChange(index, event)}
               required
               placeholder="Enter correct answer"
-              className="w-full p-3 bg-transparent border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-transparent border border-gray-300 outline-none rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button
               type="button"

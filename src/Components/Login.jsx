@@ -20,8 +20,7 @@ export async function loginAction({ request }) {
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
-      },
-      credentials:"include"
+      }
     });
 
     if (!response.ok) {

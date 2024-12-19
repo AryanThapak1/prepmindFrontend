@@ -1,11 +1,17 @@
 const Prompt = (data) => {
-  const prompt = `I have a JSON containing the details of a resume. I need you to process this data and enhance it so that the resume looks more professional and is grammatically correct. You should improve the wording, adjust the tone, and organize the content while preserving the structure and data categories.
+  const prompt = `I have a JSON containing resume details. Please enhance and refine the content to make the resume more professional, grammatically accurate, and impactful. Focus on improving the wording, adjusting the tone to be formal yet engaging, and ensuring that the structure and content flow logically. 
+
+- Correct any grammatical errors and typos.
+- Refine the language to reflect professionalism.
+- Organize the content effectively (e.g., grouping related experiences or skills).
+- Ensure the resume remains clear, concise, and easy to read.
+- Keep the structure, formatting, and categories intact.
 
 Here is the resume data in JSON format:
 
 ${data}
-Please process the JSON and return the improved version with a more professional and polished presentation while keeping the structure intact and also keep in mind there should be no extra text except the resultant json
-`;
+
+Please process this JSON and return only the improved version in JSON format, without any additional text or explanation. The result should reflect a polished and professional presentation of the original content.`;
   return prompt;
 };
 

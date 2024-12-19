@@ -1,3 +1,3 @@
 // "https://lbbackend.vercel.app"
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://lbbackend.vercel.app";
 export default BASE_URL;

@@ -5,14 +5,12 @@ import { useEffect, useState } from "react";
 
 export default function Profile() {
   const [profileData, setProfileData] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
   const headers = [
     { display: "Full Name", key: "fullName" },
     { display: "College", key: "College" },
     { display: "Email", key: "email" },
     { display: "Mobile No", key: "Mobile" },
-    {
-
-    }
   ];
 
   const token = sessionStorage.getItem("token");
@@ -28,19 +26,49 @@ export default function Profile() {
 
     const userData = await response.json();
     console.log(userData.data.user);
-    
+
     const formattedData = {
       ...userData.data.user,
       fullName: `${userData.data.user.FirstName} ${userData.data.user.LastName}`,
-
     };
 
     setProfileData(formattedData);
   };
 
+  const updateProfile = async () => {
+    const response = await fetch(`${BASE_URL}/api/v1/user/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        FirstName: profileData.FirstName,
+        LastName: profileData.LastName,
+        College: profileData.College,
+        email: profileData.email,
+        Mobile: profileData.Mobile,
+      }),
+    });
+
+    if (response.ok) {
+      const updatedData = await response.json();
+      setProfileData({
+        ...updatedData.data.user,
+        fullName: `${updatedData.data.user.FirstName} ${updatedData.data.user.LastName}`,
+      });
+      setIsEditing(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleChange = (key, value) => {
+    setProfileData((prevData) => ({ ...prevData, [key]: value }));
+    console.log(profileData);
+  };
 
   return (
     <div className="mx-[10%] mt-[5%] overflow-y-hidden">
@@ -65,10 +93,27 @@ export default function Profile() {
               key={el.key}
               title={el.display}
               text={profileData[el.key]}
+              isEditing={isEditing}
+              onChange={(e) => handleChange(el.key, e.target.value)}
             />
           ))}
         </dl>
       </div>
+      {isEditing ? (
+        <button
+          onClick={updateProfile}
+          className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md"
+        >
+          Save
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsEditing(true)}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
+        >
+          Edit
+        </button>
+      )}
     </div>
   );
 }

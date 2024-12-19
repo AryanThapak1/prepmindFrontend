@@ -13,6 +13,8 @@ import ResumeFile from "./Components/ResumeFile";
 import QuizPlayer from "./Components/QuizPlayer";
 import HomePage from "./Components/Hompage";
 import {loader as authProtector} from "./utils/authProtection"
+import ForgotPassword from "./Components/ForgotPassword";
+import EditResumeForm from "./Components/EditResumeForm"
 function App() {
   const router = createBrowserRouter([
     {
@@ -66,11 +68,17 @@ function App() {
         },{
           path:"/Resume/:id",
           element:<ResumeFile/>
+        },
+        {
+          path:"forgot",
+          element:<ForgotPassword/>
+        },{
+          path:"/EditResume/:id",
+          element:<EditResumeForm/>
         }
       ],
     },
-  ]);
-  
+  ]);  
   
   return <RouterProvider router={router}></RouterProvider>;
 }

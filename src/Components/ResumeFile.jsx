@@ -35,7 +35,9 @@ const Resume = () => {
     setResumeData(data.resume.resume);
   };
 
-  
+  const editResume=()=>{
+    navigate(`/editResume/${id}`)
+  }
 const deleteResume=async()=>{
   const res=await fetch(`${BASE_URL}/api/v1/resume/${id}`,{
     method:"DELETE"
@@ -64,6 +66,11 @@ const deleteResume=async()=>{
       >
         Download Resume
       </button>
+      
+      <button className="mb-4 px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-700" onClick={editResume}>
+        Edit Resume
+      </button>
+
       <button className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={deleteResume}>
         Delete Resume
       </button>

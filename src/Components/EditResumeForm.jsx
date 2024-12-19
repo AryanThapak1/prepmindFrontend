@@ -1,10 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import BASE_URL from "../utils/Constant";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Prompt from "../utils/Prompt";
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const ResumeForm = () => {
   const token = sessionStorage.getItem("token");
+  const navigate = useNavigate();
+
   const nameRef = useRef();
   const addressRef = useRef();
   const mobileRef = useRef();
@@ -29,10 +31,44 @@ const ResumeForm = () => {
   const softSkillsRef = useRef();
   const scoreRef = useRef();
   const awardsRef = useRef();
-  const [Projects, setProjects] = useState([
-    { Project_Name: "", Description: "" },
-  ]);
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const [projects, setProjects] = useState([{ Project_Name: "", Description: "" }]);
+
+  const fetchData = async () => {
+    const res = await fetch(`${BASE_URL}/api/v1/Resume/${id}`);
+    const data = await res.json();
+    const resume = data.resume.resume;
+
+    nameRef.current.value = resume.Name;
+    addressRef.current.value = resume.Address;
+    mobileRef.current.value = resume.Mobile_No;
+    linkedInRef.current.value = resume.LinkedIn_url;
+    githubRef.current.value = resume.github_url;
+    collegeNameRef.current.value = resume.Education.College.College_Name;
+    CGPARef.current.value = resume.Education.College.CGPA;
+    courseNameRef.current.value = resume.Education.College.CourseName;
+    csessionStartRef.current.value = resume.Education.College.SessionStart.split('T')[0];
+    csessionEndRef.current.value = resume.Education.College.SessionEnd.split('T')[0];
+    schoolNameRef.current.value = resume.Education.School.School_Name;
+    percentageRef.current.value = resume.Education.School.Percentage;
+    schoolCourseNameRef.current.value = resume.Education.School.CourseName;
+    ssessionStartRef.current.value = resume.Education.School.SessionStart.split('T')[0];
+    ssessionEndRef.current.value = resume.Education.School.SessionEnd.split('T')[0];
+    programmingLanguageRef.current.value = resume.Skills.Technical_Skills.Programming_Languages.join(',');
+    technologiesRef.current.value = resume.Skills.Technical_Skills.Technologies.join(',');
+    osRef.current.value = resume.Skills.Technical_Skills.Operating_System.join(',');
+    dbRef.current.value = resume.Skills.Technical_Skills.Database.join(',');
+    toolsRef.current.value = resume.Skills.Technical_Skills.Tools.join(',');
+    librariesRef.current.value = resume.Skills.Technical_Skills.Libraries.join(',');
+    softSkillsRef.current.value = resume.Skills.Soft_Skills.join(',');
+    scoreRef.current.value = resume.Scores_And_Certifications.join('.');
+    awardsRef.current.value = resume.Awards_And_Accomplishments.join('.');
+
+    setProjects(resume.Projects.map(project => ({
+      Project_Name: project.Project_Name,
+      Description: project.Description.join(' ')
+    })));
+  };
 
   const onAddProjectHandler = () => {
     setProjects((prevProjects) => [
@@ -42,7 +78,7 @@ const ResumeForm = () => {
   };
 
   const onProjectChangeHandler = (index, field, value) => {
-    const updatedProjects = [...Projects];
+    const updatedProjects = [...projects];
     updatedProjects[index][field] = value;
     setProjects(updatedProjects);
   };
@@ -74,8 +110,7 @@ const ResumeForm = () => {
       },
       Skills: {
         Technical_Skills: {
-          Programming_Languages:
-            programmingLanguageRef.current.value.split(","),
+          Programming_Languages: programmingLanguageRef.current.value.split(","),
           Technologies: technologiesRef.current.value.split(","),
           Operating_System: osRef.current.value.split(","),
           Database: dbRef.current.value.split(","),
@@ -86,33 +121,16 @@ const ResumeForm = () => {
       },
       Scores_And_Certifications: scoreRef.current.value.split("."),
       Awards_And_Accomplishments: awardsRef.current.value.split("."),
-      Projects,
+      Projects: projects,
     };
 
-    const genAI = new GoogleGenerativeAI(process.env.REACT_APP_API_KEY);
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const resJson = JSON.stringify(resume);
-    const prompt = Prompt(resJson);
-    console.log(prompt);
-    const result = await model.generateContent(prompt);
-
-    console.log(result.response.text().replace(/```json|```/g, ""));
-
-    const rawResponseText = await result.response.text();
-    // Remove any surrounding ```json or ``` from the response
-    const cleanResponseText = rawResponseText
-      .replace(/```json|```/g, "")
-      .trim();
-    // Parse the clean JSON string to an object
-    const newResume = JSON.parse(cleanResponseText);
-    const res = await fetch(`${BASE_URL}/api/v1/resume`, {
-      method: "POST",
-      body: JSON.stringify({ resume: newResume }),
+    console.log(resume);
+    const res = await fetch(`${BASE_URL}/api/v1/resume/:${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ resume }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     });
 
@@ -123,10 +141,14 @@ const ResumeForm = () => {
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="max-w-2xl mx-auto p-8 bg-gray-50 shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-700">
-        Resume Form
+        Edit Resume Form
       </h2>
       <form onSubmit={onSubmitHandler}>
         <div className="space-y-4">
@@ -166,9 +188,7 @@ const ResumeForm = () => {
             required
           />
 
-          <h3 className="text-xl font-semibold text-gray-700 mt-8">
-            Education
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-700 mt-8">Education</h3>
           <input
             type="text"
             ref={collegeNameRef}
@@ -241,69 +261,78 @@ const ResumeForm = () => {
             />
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-700 mt-8">
-            Technical Skills
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-700 mt-8">Technical Skills</h3>
           <input
             type="text"
             ref={programmingLanguageRef}
-            placeholder="Programming Languages seprated by commas"
+            placeholder="Programming Languages (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="text"
             ref={technologiesRef}
-            placeholder="Technologies seprated by commas"
+            placeholder="Technologies (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="text"
             ref={osRef}
-            placeholder="Operating Systems seprated by commas"
+            placeholder="Operating Systems (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="text"
             ref={dbRef}
-            placeholder="Databases seprated by commas"
+            placeholder="Databases (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="text"
             ref={toolsRef}
-            placeholder="Tools seprated by commas"
+            placeholder="Tools (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
           <input
             type="text"
             ref={librariesRef}
-            placeholder="Libraries seprated by commas"
+            placeholder="Libraries (comma separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
 
-          <h3 className="text-xl font-semibold text-gray-700 mt-8">
-            Soft Skills
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-700 mt-8">Soft Skills</h3>
           <input
             type="text"
             ref={softSkillsRef}
-            placeholder="Soft Skills"
+            placeholder="Soft Skills (comma separated)"
+            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+
+          <h3 className="text-xl font-semibold text-gray-700 mt-8">Scores and Certifications</h3>
+          <textarea
+            ref={scoreRef}
+            placeholder="Scores and Certifications (dot separated)"
+            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+
+          <h3 className="text-xl font-semibold text-gray-700 mt-8">Awards and Accomplishments</h3>
+          <textarea
+            ref={awardsRef}
+            placeholder="Awards and Accomplishments (dot separated)"
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
             required
           />
 
           <h3 className="text-xl font-semibold text-gray-700 mt-8">Projects</h3>
-          {Projects.map((project, index) => (
-            <div
-              key={index}
-              className="space-y-2 bg-white p-4 border rounded-lg shadow-md"
-            >
+          {projects.map((project, index) => (
+            <div key={index} className="space-y-2">
               <input
                 type="text"
                 placeholder="Project Name"
@@ -311,54 +340,33 @@ const ResumeForm = () => {
                 onChange={(e) =>
                   onProjectChangeHandler(index, "Project_Name", e.target.value)
                 }
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                required
               />
-              <input
-                type="text"
-                placeholder="Project Description"
+              <textarea
+                placeholder="Description"
                 value={project.Description}
                 onChange={(e) =>
                   onProjectChangeHandler(index, "Description", e.target.value)
                 }
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                required
               />
             </div>
           ))}
           <button
             type="button"
             onClick={onAddProjectHandler}
-            className="mt-2 bg-indigo-600 text-white w-full p-2 rounded-md hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md"
           >
             Add Project
           </button>
 
-          <h3 className="text-xl font-semibold text-gray-700 mt-8">
-            Scores & Certifications
-          </h3>
-          <input
-            type="text"
-            ref={scoreRef}
-            placeholder="Scores & Certifications seprated by fullstop"
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-
-          <h3 className="text-xl font-semibold text-gray-700 mt-8">
-            Awards & Accomplishments
-          </h3>
-          <input
-            type="text"
-            ref={awardsRef}
-            placeholder="Awards & Accomplishments seprated by fullstop"
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-
           <button
             type="submit"
-            className="w-full bg-green-600 text-white p-3 rounded-md mt-6 hover:bg-green-700 transition-colors"
+            className="w-full py-3 mt-4 bg-green-600 text-white rounded-md"
           >
-            Generate Resume
+            Submit
           </button>
         </div>
       </form>
